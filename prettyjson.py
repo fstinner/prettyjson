@@ -17,6 +17,8 @@ def getsubitems(obj, itemkey, islast, maxlinelength, indent):
     istuple = isinstance(obj, tuple)
     isbasictype = not (isdict or islist or istuple)
 
+    maxlinelength = max(0, maxlinelength)
+
     # build json content as a list of strings or child lists
     if isbasictype:
         # render basic type
