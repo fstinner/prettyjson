@@ -1,16 +1,14 @@
-import types
-
 # https://stackoverflow.com/a/56497521/104668
 
 def prettyjson(obj, indent=2, maxlinelength=80):
     """Renders JSON content with indentation and line splits/concatenations to fit maxlinelength.
     Only dicts, lists and basic types are supported"""
 
-    items, _ = getsubitems(obj, itemkey="", islast=True, maxlinelength=maxlinelength, level=0)
+    items, _ = getsubitems(obj, itemkey="", islast=True, maxlinelength=maxlinelength - indent, indent=indent)
     return indentitems(items, indent, level=0)
 
 
-def getsubitems(obj, itemkey, islast, maxlinelength, level):
+def getsubitems(obj, itemkey, islast, maxlinelength, indent):
     items = []
     is_inline = True      # at first, assume we can concatenate the inner tokens into one line
 
@@ -44,7 +42,7 @@ def getsubitems(obj, itemkey, islast, maxlinelength, level):
             islast_ = i == len(obj)-1
             itemkey_ = ""
             if isdict: itemkey_ = basictype2str(k)
-            inner, is_inner_inline = getsubitems(obj[k], itemkey_, islast_, maxlinelength, level+1)
+            inner, is_inner_inline = getsubitems(obj[k], itemkey_, islast_, maxlinelength - indent, indent)
             subitems.extend(inner)                        # inner can be a string or a list
             is_inline = is_inline and is_inner_inline     # if a child couldn't be rendered inline, then we are not able either
 
