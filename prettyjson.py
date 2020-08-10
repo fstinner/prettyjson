@@ -24,7 +24,7 @@ def getsubitems(obj, itemkey, islast, maxlinelength, indent):
         # render basic type
         keyseparator  = "" if itemkey == "" else ": "
         itemseparator = "" if islast else ","
-        items.append(itemkey + keyseparator + basictype2str(obj) + itemseparator)
+        items.append(itemkey + keyseparator + basictype2str(obj, False) + itemseparator)
 
     else:
         # render lists/dicts/tuples
@@ -42,7 +42,7 @@ def getsubitems(obj, itemkey, islast, maxlinelength, indent):
         for (i, k) in enumerate(keys):
             islast_ = i == len(obj)-1
             itemkey_ = ""
-            if isdict: itemkey_ = basictype2str(k)
+            if isdict: itemkey_ = basictype2str(k, True)
             inner, is_inner_inline = getsubitems(obj[k], itemkey_, islast_, maxlinelength - indent, indent)
             subitems.extend(inner)                        # inner can be a string or a list
             is_inline = is_inline and is_inner_inline     # if a child couldn't be rendered inline, then we are not able either
@@ -116,13 +116,13 @@ def getsubitems(obj, itemkey, islast, maxlinelength, indent):
     return items, is_inline
 
 
-def basictype2str(obj):
+def basictype2str(obj, is_key):
     if isinstance (obj, str):
         strobj = "\"" + str(obj) + "\""
     elif isinstance(obj, bool):
-        strobj = { True: "true", False: "false" }[obj]
+        strobj = {True: "true", False: "false"}[obj]
     elif obj is None:
-        strobj = "null"
+        strobj = '""' if is_key else "null"
     else:
         strobj = str(obj)
     return strobj
